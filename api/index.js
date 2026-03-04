@@ -137,12 +137,12 @@ const unique = (items) => [...new Set((items || []).filter(Boolean))];
 const TYPE_META = {
   support: {
     label: 'Support log',
-    icon: '🛠',
+    icon: '🧑‍💻',
     needsAccept: false,
   },
   bug: {
     label: 'Bug',
-    icon: '🐞',
+    icon: '💥',
     needsAccept: true,
   },
   proposal: {
@@ -152,7 +152,7 @@ const TYPE_META = {
   },
   feature: {
     label: 'Feature',
-    icon: '✨',
+    icon: '🔥',
     needsAccept: true,
   },
   request: {
@@ -439,7 +439,7 @@ function formatDraftPreview(payload, user) {
   lines.push('📋 <b>Yuborishdan oldingi ko‘rinish</b>');
   lines.push('');
   lines.push(`${typeMeta.icon} <b>Turi:</b> ${escapeHTML(typeMeta.label)}`);
-  lines.push(`🏢 <b>Obyekt:</b> ${escapeHTML(toTitleCase(payload.clientName) || 'Ko‘rsatilmagan')}`);
+  lines.push(`🏗 <b>Obyekt:</b> ${escapeHTML(toTitleCase(payload.clientName) || 'Ko‘rsatilmagan')}`);
   lines.push(`📝 <b>Izoh:</b> ${escapeHTML(payload.normalizedText || '')}\n`);
   lines.push(`👤 <b>Yuboruvchi:</b> ${escapeHTML(getUserDisplayName(user))}${user?.username ? ` (@${escapeHTML(user.username)})` : ''}`);
   lines.push(`🕒 <b>Sana:</b> ${escapeHTML(formatDateTime())}`);
@@ -497,7 +497,7 @@ function formatGroupLog(log, reads) {
 
   const lines = [];
   lines.push(`${typeMeta.icon} <b>${escapeHTML(typeMeta.label)}</b> <code>${escapeHTML(log.short_id)}</code>`);
-  lines.push(`🏢 <b>Obyekt:</b> ${escapeHTML(toTitleCase(log.client_name) || 'Ko‘rsatilmagan')}`);
+  lines.push(`🏗 <b>Obyekt:</b> ${escapeHTML(toTitleCase(log.client_name) || 'Ko‘rsatilmagan')}`);
   lines.push(`📝 <b>Izoh:</b> ${escapeHTML(log.normalized_text || '')}\n`);
   lines.push(`👤 <b>Yubordi:</b> ${senderLine}`);
   lines.push(`🕒 <b>Sana:</b> ${escapeHTML(formatDateTime(log.created_at))}`);
