@@ -5,7 +5,7 @@
   "main": "api/index.js",
   "type": "commonjs",
   "engines": {
-    "node": "24.x"
+    "node": "20.x"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.3",
