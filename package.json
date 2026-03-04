@@ -1,0 +1,14 @@
+{
+  "name": "bug-report-bot",
+  "version": "1.0.0",
+  "description": "Telegram bug-report intake bot (Telegraf + Supabase) for Vercel",
+  "main": "api/index.js",
+  "type": "commonjs",
+  "engines": {
+    "node": "20.x"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.3",
+    "telegraf": "^4.16.3"
+  }
+}

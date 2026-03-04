@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="uz">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bug Report Bot</title>
+
+  <style>
+    :root {
+      --bg-1: #0f172a;
+      --bg-2: #1e293b;
+      --card: rgba(255, 255, 255, 0.08);
+      --border: rgba(255, 255, 255, 0.14);
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent-1: #38bdf8;
+      --accent-2: #8b5cf6;
+      --accent-3: #22c55e;
+      --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(139, 92, 246, 0.18), transparent 30%),
+        radial-gradient(circle at bottom left, rgba(56, 189, 248, 0.18), transparent 30%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2));
+      color: var(--text);
+      padding: 24px;
+    }
+
+    .wrap {
+      width: min(92vw, 560px);
+      text-align: center;
+      padding: 42px 28px;
+      border-radius: 24px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: var(--shadow);
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      line-height: 1.1;
+      margin-bottom: 22px;
+      letter-spacing: -0.03em;
+      background: linear-gradient(90deg, #ffffff, #cbd5e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-top: 14px;
+    }
+
+    /* Drum container */
+    .drum {
+      width: min(100%, 340px);
+      height: 64px;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+      border-radius: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)),
+        linear-gradient(90deg, rgba(56, 189, 248, 0.08), rgba(139, 92, 246, 0.08));
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        inset 0 -8px 22px rgba(0, 0, 0, 0.25),
+        0 10px 30px rgba(0, 0, 0, 0.25);
+      perspective: 900px;
+    }
+
+    /* Top and bottom fade for reel effect */
+    .drum::before,
+    .drum::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 16px;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .drum::before {
+      top: 0;
+      background: linear-gradient(to bottom, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0));
+    }
+
+    .drum::after {
+      bottom: 0;
+      background: linear-gradient(to top, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0));
+    }
+
+    .drum-track {
+      display: flex;
+      flex-direction: column;
+      animation: reel 6s cubic-bezier(0.72, 0.02, 0.18, 0.98) infinite;
+      will-change: transform;
+    }
+
+    .drum-text {
+      height: 64px;
+      display: grid;
+      place-items: center;
+      font-size: clamp(1.2rem, 3.4vw, 1.6rem);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      transform: rotateX(10deg);
+      text-shadow: 0 0 18px rgba(255, 255, 255, 0.08);
+      user-select: none;
+    }
+
+    .drum-text:nth-child(1) {
+      color: var(--accent-1);
+    }
+
+    .drum-text:nth-child(2) {
+      color: var(--accent-2);
+    }
+
+    .drum-text:nth-child(3) {
+      color: var(--accent-3);
+    }
+
+    .drum-text:nth-child(4) {
+      color: var(--accent-1);
+    }
+
+    @keyframes reel {
+
+      0%,
+      18% {
+        transform: translateY(0);
+      }
+
+      25%,
+      43% {
+        transform: translateY(-64px);
+      }
+
+      50%,
+      68% {
+        transform: translateY(-128px);
+      }
+
+      75%,
+      93% {
+        transform: translateY(-192px);
+      }
+
+      100% {
+        transform: translateY(-192px);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <h1>Bug Report Bot</h1>
+
+    <p class="drum" aria-label="Coming Soon text animation">
+      <span class="drum-track">
+        <span class="drum-text">Coming Soon</span>
+        <span class="drum-text">Tez kunda</span>
+        <span class="drum-text">Скоро</span>
+        <!-- Loop silliq bo‘lishi uchun birinchi matn qayta qo‘yildi -->
+        <span class="drum-text">Coming Soon</span>
+      </span>
+    </p>
+
+    <p class="subtitle">Mini App ustida ish olib borilmoqda, yaqin kunlarda ishga tushadi.</p>
+  </div>
+</body>
+
+</html>
