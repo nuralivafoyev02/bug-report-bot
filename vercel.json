@@ -1,14 +1,15 @@
 {
   "version": 2,
-  "functions": {
-    "api/index.js": {
-      "runtime": "@vercel/node"
-    }
-  },
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/api/(.*)",
       "destination": "/api/index.js"
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/telegram/webhook?job=monthly_leaderboard",
+      "schedule": "5 4 1 * *"
     }
   ]
 }
