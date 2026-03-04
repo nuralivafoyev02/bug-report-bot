@@ -1,54 +1,3 @@
-/*
-  Support / taklif / bug log bot (Telegram + Supabase)
-
-  Required Supabase tables (SQL):
-
-  create extension if not exists pgcrypto;
-
-  create table if not exists log_sessions (
-    user_id bigint primary key,
-    step text not null,
-    payload jsonb not null default '{}'::jsonb,
-    updated_at timestamptz not null default now()
-  );
-
-  create table if not exists support_logs (
-    id uuid primary key default gen_random_uuid(),
-    short_id text unique not null,
-    user_id bigint not null,
-    username text,
-    full_name text,
-    raw_text text not null,
-    client_name text,
-    type text not null,
-    normalized_text text not null,
-    keywords jsonb not null default '[]'::jsonb,
-    needs_accept boolean not null default false,
-    is_accepted boolean not null default false,
-    accepted_by bigint,
-    accepted_at timestamptz,
-    target_chat_id bigint,
-    target_message_id bigint,
-    attachments jsonb not null default '[]'::jsonb,
-    created_at timestamptz not null default now(),
-    updated_at timestamptz not null default now()
-  );
-
-  create index if not exists support_logs_user_id_idx on support_logs(user_id);
-  create index if not exists support_logs_type_idx on support_logs(type);
-  create index if not exists support_logs_short_id_idx on support_logs(short_id);
-
-  create table if not exists log_reads (
-    id bigserial primary key,
-    log_id uuid not null references support_logs(id) on delete cascade,
-    role text not null,
-    reader_id bigint not null,
-    reader_name text,
-    read_at timestamptz not null default now(),
-    unique (log_id, role)
-  );
-*/
-
 const { Telegraf, Markup } = require('telegraf');
 const { createClient } = require('@supabase/supabase-js');
 
@@ -482,7 +431,7 @@ function formatDraftPreview(payload, user) {
   lines.push('');
   lines.push(`${typeMeta.icon} <b>Turi:</b> ${escapeHTML(typeMeta.label)}`);
   lines.push(`🏢 <b>Obyekt:</b> ${escapeHTML(payload.clientName || 'Ko‘rsatilmagan')}`);
-  lines.push(`📝 <b>Log:</b> ${escapeHTML(payload.normalizedText || '')}`);
+  lines.push(`📝 <b>Izoh:</b> ${escapeHTML(payload.normalizedText || '')}\n`);
   lines.push(`👤 <b>Yuboruvchi:</b> ${escapeHTML(getUserDisplayName(user))}${user?.username ? ` (@${escapeHTML(user.username)})` : ''}`);
   lines.push(`🕒 <b>Sana:</b> ${escapeHTML(formatDateTime())}`);
 
@@ -519,8 +468,8 @@ function buildTargetKeyboard(log, reads) {
 
   const rows = [
     [
-      Markup.button.callback(hasCEO ? '✅ CEO o‘qidi' : '👀 CEO o‘qidi', `log_read_ceo_${log.short_id}`),
-      Markup.button.callback(hasPM ? '✅ PM o‘qidi' : '👀 PM o‘qidi', `log_read_pm_${log.short_id}`),
+      Markup.button.callback(hasCEO ? '✅ CEO o‘qidi' : 'CEO o‘qidi👀', `log_read_ceo_${log.short_id}`),
+      Markup.button.callback(hasPM ? '✅ PM o‘qidi' : 'PM o‘qidi👀', `log_read_pm_${log.short_id}`),
     ],
   ];
 
@@ -540,7 +489,7 @@ function formatGroupLog(log, reads) {
   const lines = [];
   lines.push(`${typeMeta.icon} <b>${escapeHTML(typeMeta.label)}</b> <code>${escapeHTML(log.short_id)}</code>`);
   lines.push(`🏢 <b>Obyekt:</b> ${escapeHTML(log.client_name || 'Ko‘rsatilmagan')}`);
-  lines.push(`📝 <b>Log:</b> ${escapeHTML(log.normalized_text || '')}`);
+  lines.push(`📝 <b>Izoh:</b> ${escapeHTML(log.normalized_text || '')}\n`);
   lines.push(`👤 <b>Yubordi:</b> ${senderLine}`);
   lines.push(`🕒 <b>Sana:</b> ${escapeHTML(formatDateTime(log.created_at))}`);
 
@@ -599,11 +548,11 @@ async function startNewDraft(ctx) {
   await upsertSession(ctx.from.id, 'awaiting_input', { attachments: [] });
   return ctx.reply(
     'Yangi log yuboring.\n\n' +
-      'Tavsiya etiladigan format:\n' +
-      '1-qator: obyekt nomi\n' +
-      '2-qator: ixtiyoriy #support / #bug / #taklif / #feature\n' +
-      'Keyin: batafsil log\n\n' +
-      'Rasm/video/fayl yuborsangiz, caption ichiga logni yozing. Caption bo‘lmasa ham media saqlanadi, keyin matn yuborasiz.',
+    'Tavsiya etiladigan format:\n' +
+    '1-qator: obyekt nomi\n' +
+    '2-qator: ixtiyoriy #support / #bug / #taklif / #feature\n' +
+    'Keyin: batafsil izoh qoldiring\n\n' +
+    'Rasm/video/fayl yuborsangiz, caption ichiga logni yozing. Caption bo‘lmasa ham media saqlanadi, keyin matn yuborasiz.',
     { disable_web_page_preview: true }
   );
 }
@@ -670,7 +619,7 @@ async function finalizeAndSend(ctx, payload) {
   await clearSession(ctx.from.id);
 
   return ctx.reply(
-    `✅ Log yuborildi.\nID: <code>${escapeHTML(savedLog.short_id)}</code>\nGuruhga tushunarli formatda jo‘natildi.`,
+    `✅ Log guruhga yuborildi.\nID: <code>${escapeHTML(savedLog.short_id)}</code>`,
     { parse_mode: 'HTML' }
   );
 }
@@ -766,8 +715,8 @@ bot.command('status', async (ctx) => {
 
   return ctx.reply(
     `${typeMeta.icon} <b>${escapeHTML(typeMeta.label)}</b> <code>${escapeHTML(log.short_id)}</code>\n` +
-      `📌 <b>Holat:</b> ${escapeHTML(statusText)}\n` +
-      `👀 <b>O‘qiganlar:</b> ${escapeHTML(buildReadsText(reads))}`,
+    `📌 <b>Holat:</b> ${escapeHTML(statusText)}\n` +
+    `👀 <b>O‘qiganlar:</b> ${escapeHTML(buildReadsText(reads))}`,
     { parse_mode: 'HTML' }
   );
 });
@@ -940,7 +889,7 @@ module.exports = async (req, res) => {
       return res.status(200).send('OK');
     }
 
-    return res.status(200).send('Support Log Bot is running');
+    return res.status(200).send('Bot is running tree clean');
   } catch (error) {
     console.error('handler error:', error);
     return res.status(200).send('OK');
