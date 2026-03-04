@@ -488,7 +488,7 @@ function formatGroupLog(log, reads) {
 
   const lines = [];
   lines.push(`${typeMeta.icon} <b>${escapeHTML(typeMeta.label)}</b> <code>${escapeHTML(log.short_id)}</code>`);
-  lines.push(`🏢 <b>Obyekt:</b> ${escapeHTML(log.client_name || 'Ko‘rsatilmagan')}`);
+  lines.push(`🏢 <b>Obyekt:</b> ${escapeHTML(log.client_name.toCamelCase() || 'Ko‘rsatilmagan')}`);
   lines.push(`📝 <b>Izoh:</b> ${escapeHTML(log.normalized_text || '')}\n`);
   lines.push(`👤 <b>Yubordi:</b> ${senderLine}`);
   lines.push(`🕒 <b>Sana:</b> ${escapeHTML(formatDateTime(log.created_at))}`);
@@ -498,7 +498,7 @@ function formatGroupLog(log, reads) {
   }
 
   if (log.needs_accept) {
-    const status = log.is_accepted ? 'Qabul qilindi' : 'Kutilmoqda';
+    const status = log.is_accepted ? 'Qabul qilindi✅' : 'Kutilmoqda⏳';
     lines.push(`📌 <b>Holat:</b> ${escapeHTML(status)}`);
   }
 
@@ -547,7 +547,8 @@ function canMarkRole(userId, role) {
 async function startNewDraft(ctx) {
   await upsertSession(ctx.from.id, 'awaiting_input', { attachments: [] });
   return ctx.reply(
-    'Yangi log yuboring.\n\n' +
+    'Assalomu alaykum ' + getUserDisplayName(ctx.from) + '👋\n' +
+    'Bot yordamida loglarni tartiblab tushunarli formatda yuborishingiz mumkin.\n\n' +
     'Tavsiya etiladigan format:\n' +
     '1-qator: obyekt nomi\n' +
     '2-qator: ixtiyoriy #support / #bug / #taklif / #feature\n' +
