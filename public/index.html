@@ -8,16 +8,26 @@
 
   <style>
     :root {
-      --bg-1: #0f172a;
-      --bg-2: #1e293b;
+      --bg-1: #050816;
+      --bg-2: #0b1120;
+      --bg-3: #111827;
+
       --card: rgba(255, 255, 255, 0.08);
-      --border: rgba(255, 255, 255, 0.14);
-      --text: #e2e8f0;
-      --muted: #94a3b8;
+      --card-2: rgba(255, 255, 255, 0.04);
+      --border: rgba(255, 255, 255, 0.16);
+
+      --text: #eef4ff;
+      --muted: #9fb0d0;
+
       --accent-1: #38bdf8;
       --accent-2: #8b5cf6;
       --accent-3: #22c55e;
-      --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      --accent-4: #f59e0b;
+
+      --shadow:
+        0 30px 80px rgba(0, 0, 0, 0.55),
+        0 10px 30px rgba(56, 189, 248, 0.08),
+        0 10px 30px rgba(139, 92, 246, 0.08);
     }
 
     * {
@@ -26,165 +36,686 @@
       padding: 0;
     }
 
+    html,
+    body {
+      height: 100%;
+    }
+
     body {
       min-height: 100vh;
       display: grid;
       place-items: center;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background:
-        radial-gradient(circle at top right, rgba(139, 92, 246, 0.18), transparent 30%),
-        radial-gradient(circle at bottom left, rgba(56, 189, 248, 0.18), transparent 30%),
-        linear-gradient(135deg, var(--bg-1), var(--bg-2));
       color: var(--text);
-      padding: 24px;
+      background:
+        radial-gradient(circle at 15% 20%, rgba(56, 189, 248, 0.10), transparent 25%),
+        radial-gradient(circle at 85% 15%, rgba(139, 92, 246, 0.12), transparent 28%),
+        radial-gradient(circle at 50% 85%, rgba(34, 197, 94, 0.08), transparent 25%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2), var(--bg-3));
+      overflow: hidden;
+      position: relative;
+      isolation: isolate;
     }
 
-    .wrap {
-      width: min(92vw, 560px);
+    body::before,
+    body::after {
+      content: "";
+      position: fixed;
+      inset: -20%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::before {
+      background:
+        radial-gradient(circle, rgba(56, 189, 248, 0.10) 0%, transparent 25%),
+        radial-gradient(circle, rgba(139, 92, 246, 0.10) 0%, transparent 28%);
+      filter: blur(60px);
+      animation: floatBg 18s ease-in-out infinite alternate;
+    }
+
+    body::after {
+      background:
+        radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.04), transparent 18%),
+        radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.03), transparent 18%);
+      filter: blur(24px);
+      animation: pulseBg 10s ease-in-out infinite;
+    }
+
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.028) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.028) 1px, transparent 1px);
+      background-size: 38px 38px;
+      mask-image: radial-gradient(circle at center, black 38%, transparent 85%);
+      opacity: 0.5;
+    }
+
+    .aurora {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      filter: blur(70px);
+      opacity: 0.75;
+    }
+
+    .aurora span {
+      position: absolute;
+      border-radius: 999px;
+      mix-blend-mode: screen;
+      animation: drift 14s ease-in-out infinite alternate;
+    }
+
+    .aurora span:nth-child(1) {
+      width: 360px;
+      height: 360px;
+      top: 8%;
+      left: 6%;
+      background: rgba(56, 189, 248, 0.18);
+      animation-duration: 16s;
+    }
+
+    .aurora span:nth-child(2) {
+      width: 420px;
+      height: 420px;
+      top: 5%;
+      right: 4%;
+      background: rgba(139, 92, 246, 0.16);
+      animation-duration: 19s;
+    }
+
+    .aurora span:nth-child(3) {
+      width: 340px;
+      height: 340px;
+      bottom: 6%;
+      left: 30%;
+      background: rgba(34, 197, 94, 0.12);
+      animation-duration: 15s;
+    }
+
+    .stars {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .star {
+      position: absolute;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow:
+        0 0 6px rgba(255, 255, 255, 0.9),
+        0 0 18px rgba(56, 189, 248, 0.35);
+      animation: twinkle linear infinite;
+      opacity: 0.15;
+    }
+
+    .scene {
+      position: relative;
+      z-index: 2;
+      width: min(94vw, 720px);
+      perspective: 1600px;
+    }
+
+    .orbit {
+      position: absolute;
+      inset: -30px;
+      border-radius: 36px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .orbit.one {
+      border: 1px solid rgba(56, 189, 248, 0.12);
+      animation: spin 18s linear infinite;
+    }
+
+    .orbit.two {
+      inset: -16px;
+      border: 1px solid rgba(139, 92, 246, 0.12);
+      animation: spinReverse 14s linear infinite;
+    }
+
+    .card {
+      --mx: 50%;
+      --my: 50%;
+      position: relative;
+      z-index: 2;
       text-align: center;
-      padding: 42px 28px;
-      border-radius: 24px;
-      background: var(--card);
+      padding: 30px 26px 26px;
+      border-radius: 28px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.10), rgba(255, 255, 255, 0.04)),
+        linear-gradient(135deg, rgba(56, 189, 248, 0.04), rgba(139, 92, 246, 0.04));
       border: 1px solid var(--border);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       box-shadow: var(--shadow);
+      transform-style: preserve-3d;
+      transition: transform 180ms ease-out, border-color 180ms ease-out, box-shadow 180ms ease-out;
+      animation: intro 1s cubic-bezier(.2, .7, .2, 1) both;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -120%;
+      background: conic-gradient(from 180deg,
+          transparent 0deg,
+          rgba(56, 189, 248, 0.10) 70deg,
+          transparent 120deg,
+          rgba(139, 92, 246, 0.09) 210deg,
+          transparent 280deg);
+      animation: shimmer 10s linear infinite;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(circle at var(--mx) var(--my),
+          rgba(255, 255, 255, 0.14),
+          rgba(255, 255, 255, 0.04) 18%,
+          transparent 42%);
+    }
+
+    .content {
+      position: relative;
+      z-index: 2;
+      transform: translateZ(40px);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.06);
+      color: #dbeafe;
+      font-size: 0.86rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      margin-bottom: 20px;
+      animation: floatY 4.5s ease-in-out infinite;
+    }
+
+    .badge .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-3), #86efac);
+      box-shadow: 0 0 12px rgba(34, 197, 94, 0.8);
+      animation: pulseDot 1.6s ease-in-out infinite;
+      flex-shrink: 0;
     }
 
     h1 {
-      font-size: clamp(2rem, 5vw, 3.2rem);
-      line-height: 1.1;
-      margin-bottom: 22px;
-      letter-spacing: -0.03em;
-      background: linear-gradient(90deg, #ffffff, #cbd5e1);
+      font-size: clamp(2.3rem, 6vw, 4.6rem);
+      line-height: 1.02;
+      letter-spacing: -0.04em;
+      margin-bottom: 14px;
+      font-weight: 900;
+      background: linear-gradient(90deg, #ffffff, #dbeafe, #c4b5fd, #ffffff);
+      background-size: 200% auto;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      animation: titleGlow 6s linear infinite;
+      text-wrap: balance;
+      text-shadow: 0 0 30px rgba(255, 255, 255, 0.05);
     }
 
-    .subtitle {
+    .lead {
+      font-size: clamp(0.98rem, 2.2vw, 1.1rem);
+      line-height: 1.7;
       color: var(--muted);
-      font-size: 0.95rem;
-      margin-top: 14px;
+      max-width: 560px;
+      margin: 0 auto 22px;
+      text-wrap: balance;
     }
 
-    /* Drum container */
-    .drum {
-      width: min(100%, 340px);
-      height: 64px;
-      margin: 0 auto;
+    .machine {
+      margin: 8px auto 18px;
+      width: min(100%, 420px);
+    }
+
+    .slot-shell {
       position: relative;
+      height: 78px;
       overflow: hidden;
-      border-radius: 8px;
+      border-radius: 18px;
       border: 1px solid rgba(255, 255, 255, 0.12);
       background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02)),
         linear-gradient(90deg, rgba(56, 189, 248, 0.08), rgba(139, 92, 246, 0.08));
-      perspective: 900px;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        inset 0 -14px 26px rgba(0, 0, 0, 0.14),
+        0 10px 30px rgba(0, 0, 0, 0.18);
+      mask-image: linear-gradient(to bottom, transparent 0%, black 14%, black 86%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 14%, black 86%, transparent 100%);
     }
 
-    /* Top and bottom fade for reel effect */
-    .drum::before,
-    .drum::after {
+    .slot-shell::before,
+    .slot-shell::after {
       content: "";
       position: absolute;
       left: 0;
       width: 100%;
-      height: 16px;
+      height: 22px;
       z-index: 2;
       pointer-events: none;
     }
 
-    .drum::before {
+    .slot-shell::before {
       top: 0;
-      background: linear-gradient(to bottom, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0));
+      background: linear-gradient(to bottom, rgba(5, 8, 22, 0.82), rgba(5, 8, 22, 0));
     }
 
-    .drum::after {
+    .slot-shell::after {
       bottom: 0;
-      background: linear-gradient(to top, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0));
+      background: linear-gradient(to top, rgba(5, 8, 22, 0.82), rgba(5, 8, 22, 0));
     }
 
-    .drum-track {
+    .focus-line {
+      position: absolute;
+      inset: 50% 14px auto 14px;
+      height: 1px;
+      transform: translateY(-50%);
+      z-index: 2;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.1);
+    }
+
+    .slot-track {
       display: flex;
       flex-direction: column;
-      animation: reel 6s cubic-bezier(0.72, 0.02, 0.18, 0.98) infinite;
       will-change: transform;
+      animation: reel 8s cubic-bezier(0.72, 0.02, 0.18, 0.98) infinite;
     }
 
-    .drum-text {
-      height: 64px;
+    .slot-item {
+      height: 78px;
       display: grid;
       place-items: center;
-      font-size: clamp(1.2rem, 3.4vw, 1.6rem);
-      font-weight: 700;
-      letter-spacing: 0.02em;
+      font-size: clamp(1.18rem, 3.4vw, 1.7rem);
+      font-weight: 900;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
-      transform: rotateX(10deg);
-      text-shadow: 0 0 18px rgba(255, 255, 255, 0.08);
+      transform: rotateX(12deg);
+      text-shadow: 0 0 22px rgba(255, 255, 255, 0.08);
       user-select: none;
     }
 
-    .drum-text:nth-child(1) {
+    .slot-item:nth-child(1) {
       color: var(--accent-1);
     }
 
-    .drum-text:nth-child(2) {
-      color: var(--accent-2);
+    .slot-item:nth-child(2) {
+      color: #c4b5fd;
     }
 
-    .drum-text:nth-child(3) {
-      color: var(--accent-3);
+    .slot-item:nth-child(3) {
+      color: #86efac;
     }
 
-    .drum-text:nth-child(4) {
+    .slot-item:nth-child(4) {
       color: var(--accent-1);
+    }
+
+    .subtitle {
+      color: #d8e4ff;
+      font-size: 0.98rem;
+      line-height: 1.7;
+      max-width: 560px;
+      margin: 0 auto 18px;
+      text-wrap: balance;
+    }
+
+    .mini-pill {
+      display: inline-flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      padding: 11px 16px;
+      border-radius: 16px;
+      font-size: 0.84rem;
+      color: #cbd5e1;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .mini-pill span {
+      opacity: 0.95;
+      white-space: nowrap;
+    }
+
+    @keyframes intro {
+      0% {
+        opacity: 0;
+        transform: translateY(36px) scale(0.96) rotateX(10deg);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotateX(0deg);
+      }
+    }
+
+    @keyframes shimmer {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes titleGlow {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      100% {
+        background-position: 200% 50%;
+      }
+    }
+
+    @keyframes floatY {
+
+      0%,
+      100% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-6px);
+      }
+    }
+
+    @keyframes pulseDot {
+
+      0%,
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      50% {
+        transform: scale(1.2);
+        opacity: 0.75;
+      }
     }
 
     @keyframes reel {
 
       0%,
-      18% {
+      15% {
         transform: translateY(0);
       }
 
-      25%,
-      43% {
-        transform: translateY(-64px);
+      21%,
+      39% {
+        transform: translateY(-78px);
       }
 
-      50%,
-      68% {
-        transform: translateY(-128px);
+      45%,
+      63% {
+        transform: translateY(-156px);
       }
 
-      75%,
-      93% {
-        transform: translateY(-192px);
+      69%,
+      96% {
+        transform: translateY(-234px);
       }
 
       100% {
-        transform: translateY(-192px);
+        transform: translateY(-234px);
+      }
+    }
+
+    @keyframes twinkle {
+      0% {
+        opacity: 0.08;
+        transform: scale(0.7);
+      }
+
+      50% {
+        opacity: 0.95;
+        transform: scale(1);
+      }
+
+      100% {
+        opacity: 0.08;
+        transform: scale(0.7);
+      }
+    }
+
+    @keyframes floatBg {
+      0% {
+        transform: translate3d(-2%, -1%, 0) scale(1);
+      }
+
+      100% {
+        transform: translate3d(3%, 2%, 0) scale(1.08);
+      }
+    }
+
+    @keyframes pulseBg {
+
+      0%,
+      100% {
+        opacity: 0.65;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes drift {
+      0% {
+        transform: translate3d(0, 0, 0) scale(1);
+      }
+
+      100% {
+        transform: translate3d(40px, -30px, 0) scale(1.1);
+      }
+    }
+
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes spinReverse {
+      from {
+        transform: rotate(360deg);
+      }
+
+      to {
+        transform: rotate(0deg);
+      }
+    }
+
+    @media (max-width: 640px) {
+      .card {
+        padding: 22px 16px 18px;
+        border-radius: 24px;
+      }
+
+      .slot-shell {
+        height: 72px;
+      }
+
+      .slot-item {
+        height: 72px;
+      }
+
+      @keyframes reel {
+
+        0%,
+        15% {
+          transform: translateY(0);
+        }
+
+        21%,
+        39% {
+          transform: translateY(-72px);
+        }
+
+        45%,
+        63% {
+          transform: translateY(-144px);
+        }
+
+        69%,
+        96% {
+          transform: translateY(-216px);
+        }
+
+        100% {
+          transform: translateY(-216px);
+        }
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        transition: none !important;
+      }
+
+      .card {
+        transform: none !important;
       }
     }
   </style>
 </head>
 
 <body>
-  <div class="wrap">
-    <h1>Bug Report Bot</h1>
+  <div class="bg-grid"></div>
 
-    <p class="drum" aria-label="Coming Soon text animation">
-      <span class="drum-track">
-        <span class="drum-text">Coming Soon</span>
-        <span class="drum-text">Tez kunda</span>
-        <span class="drum-text">Скоро</span>
-        <!-- Loop silliq bo‘lishi uchun birinchi matn qayta qo‘yildi -->
-        <span class="drum-text">Coming Soon</span>
-      </span>
-    </p>
-
-    <p class="subtitle">Mini App ustida ish olib borilmoqda, yaqin kunlarda ishga tushadi⚡️</p>
+  <div class="aurora" aria-hidden="true">
+    <span></span>
+    <span></span>
+    <span></span>
   </div>
+
+  <div class="stars" aria-hidden="true"></div>
+
+  <main class="scene">
+    <div class="orbit one" aria-hidden="true"></div>
+    <div class="orbit two" aria-hidden="true"></div>
+
+    <section class="card" id="heroCard">
+      <div class="content">
+        <div class="badge">
+          <span class="dot"></span>
+          Tez orada ishga tushadi
+        </div>
+
+        <h1>Bug Report Bot</h1>
+
+        <p class="lead">
+          Bug'larni tartibli qabul qilish, tushunarli ko‘rinishda yuborish va jarayonni professional boshqarish
+          uchun yaratilayotgan mini app.
+        </p>
+
+        <div class="machine">
+          <div class="slot-shell" aria-label="Coming soon animation" role="status">
+            <div class="focus-line"></div>
+
+            <div class="slot-track">
+              <div class="slot-item">Coming Soon</div>
+              <div class="slot-item">Tez kunda</div>
+              <div class="slot-item">Скоро</div>
+              <div class="slot-item">Coming Soon</div>
+            </div>
+          </div>
+        </div>
+
+        <p class="subtitle">
+          Mini App ustida faol ish olib borilmoqda. Yaqin kunla ichida ishga tushiriladi ✨
+        </p>
+
+        <div class="mini-pill">
+          <span>🚀 Premium UI</span>
+          <span>⚡ Smooth Motion</span>
+          <span>💎 Glass Effect</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Yulduzchalar yaratish
+    const stars = document.querySelector('.stars');
+    const STAR_COUNT = 38;
+
+    for (let i = 0; i < STAR_COUNT; i++) {
+      const s = document.createElement('span');
+      s.className = 'star';
+
+      const size = Math.random() * 3 + 1;
+      s.style.width = `${size}px`;
+      s.style.height = `${size}px`;
+      s.style.left = `${Math.random() * 100}%`;
+      s.style.top = `${Math.random() * 100}%`;
+      s.style.animationDuration = `${Math.random() * 4 + 2.5}s`;
+      s.style.animationDelay = `${Math.random() * 4}s`;
+
+      stars.appendChild(s);
+    }
+
+    // 3D tilt + pointer glow
+    const card = document.getElementById('heroCard');
+
+    function resetCard() {
+      card.style.transform = 'rotateX(0deg) rotateY(0deg)';
+      card.style.setProperty('--mx', '50%');
+      card.style.setProperty('--my', '50%');
+    }
+
+    card.addEventListener('pointermove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width;
+      const y = (e.clientY - rect.top) / rect.height;
+
+      const rotateY = (x - 0.5) * 14;
+      const rotateX = (0.5 - y) * 14;
+
+      card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+      card.style.setProperty('--mx', `${x * 100}%`);
+      card.style.setProperty('--my', `${y * 100}%`);
+    });
+
+    card.addEventListener('pointerleave', resetCard);
+    resetCard();
+  </script>
 </body>
 
 </html>
