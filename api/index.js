@@ -122,6 +122,15 @@ const capitalizeFirst = (text) => {
   return value.charAt(0).toUpperCase() + value.slice(1);
 };
 
+const toTitleCase = (text) => {
+  const value = String(text || '').trim();
+  if (!value) return '';
+  return value
+    .split(/\s+/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+};
+
 const unique = (items) => [...new Set((items || []).filter(Boolean))];
 
 // ===== TYPE / ANALYSIS =====
@@ -430,7 +439,7 @@ function formatDraftPreview(payload, user) {
   lines.push('📋 <b>Yuborishdan oldingi ko‘rinish</b>');
   lines.push('');
   lines.push(`${typeMeta.icon} <b>Turi:</b> ${escapeHTML(typeMeta.label)}`);
-  lines.push(`🏢 <b>Obyekt:</b> ${escapeHTML(payload.clientName || 'Ko‘rsatilmagan')}`);
+  lines.push(`🏢 <b>Obyekt:</b> ${escapeHTML(toTitleCase(payload.clientName) || 'Ko‘rsatilmagan')}`);
   lines.push(`📝 <b>Izoh:</b> ${escapeHTML(payload.normalizedText || '')}\n`);
   lines.push(`👤 <b>Yuboruvchi:</b> ${escapeHTML(getUserDisplayName(user))}${user?.username ? ` (@${escapeHTML(user.username)})` : ''}`);
   lines.push(`🕒 <b>Sana:</b> ${escapeHTML(formatDateTime())}`);
@@ -488,7 +497,7 @@ function formatGroupLog(log, reads) {
 
   const lines = [];
   lines.push(`${typeMeta.icon} <b>${escapeHTML(typeMeta.label)}</b> <code>${escapeHTML(log.short_id)}</code>`);
-  lines.push(`🏢 <b>Obyekt:</b> ${escapeHTML(log.client_name.toCamelCase() || 'Ko‘rsatilmagan')}`);
+  lines.push(`🏢 <b>Obyekt:</b> ${escapeHTML(toTitleCase(log.client_name) || 'Ko‘rsatilmagan')}`);
   lines.push(`📝 <b>Izoh:</b> ${escapeHTML(log.normalized_text || '')}\n`);
   lines.push(`👤 <b>Yubordi:</b> ${senderLine}`);
   lines.push(`🕒 <b>Sana:</b> ${escapeHTML(formatDateTime(log.created_at))}`);
